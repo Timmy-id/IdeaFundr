@@ -7,7 +7,7 @@ const otpSchema: Schema = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: 'User' },
     code: { type: String, required: true }
   },
-  { timestamps: true, expires: 300 }
+  { timestamps: true, expireAfterSeconds: 300 }
 );
 
 otpSchema.pre('save', async function (next) {
