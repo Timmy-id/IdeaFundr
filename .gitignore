@@ -4,3 +4,9 @@ node_modules
 .eslintignore
 .eslintcache
 .prettierignore
+
+.env.production.local
+.env.development.local
+
+dist
+logs

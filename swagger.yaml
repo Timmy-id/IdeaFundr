@@ -1,0 +1,140 @@
+tags:
+  - name: Auth
+    description: Everything about authentication
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: User registration
+      operationId: RegisterUser
+      requestBody:
+        description: Creates a new user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+        '409':
+          description: Conflict
+        '500':
+          description: Internal server error
+
+  /auth/verify:
+    post:
+      tags:
+        - Auth
+      summary: Verify user
+      operationId: VerifyUser
+      requestBody:
+        description: Verify user account
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyUser'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /auth/resendotp:
+    post:
+      tags:
+        - Auth
+      summary: Resend OTP
+      operationId: ResendOtp
+      requestBody:
+        description: Resend OTP to user's email
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendOtp'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: User login
+      operationId: LoginUser
+      requestBody:
+        description: User logs in to account
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    RegisterUser:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: johndoe@example.com
+        passowrd:
+          type: string
+          example: 12345678
+        passwordConfirm:
+          type: string
+          example: 12345678
+    VerifyUser:
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 643f2486adbcb274dv9b4752
+        otp:
+          type: string
+          example: 2hJu
+    ResendOtp:
+      type: object
+      properties:
+        userId:
+          type: string
+          example: 643f2486adbcb274dv9b4752
+        email:
+          type: string
+          example: johndoe@example.com
+    LoginUser:
+      type: object
+      properties:
+        email:
+          type: string
+          example: johndoe@example.com
+        password:
+          type: string
+          example: 12345678

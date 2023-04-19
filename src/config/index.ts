@@ -2,4 +2,22 @@ import { config } from 'dotenv';
 
 config({ path: `.env.${process.env.NODE_ENV ?? 'development'}.local` });
 
-export const { NODE_ENV, PORT } = process.env;
+export const {
+  NODE_ENV,
+  PORT,
+  DATABASE_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_AUTH_REDIRECT_URL,
+  OTP_LENGTH,
+  EMAIL_USER,
+  EMAIL_PASS,
+  SERVICE,
+  ACCESS_TOKEN_PRIVATE_KEY,
+  ACCESS_TOKEN_PUBLIC_KEY,
+  ACCESS_TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_PRIVATE_KEY,
+  REFRESH_TOKEN_PUBLIC_KEY,
+  REFRESH_TOKEN_EXPIRES_IN,
+  SERVER_URL
+} = process.env;
