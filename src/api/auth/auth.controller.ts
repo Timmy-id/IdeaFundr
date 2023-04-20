@@ -5,6 +5,7 @@ import { type LoginInput, type RegisterInput } from './auth.schema';
 import { privateFields } from '../user/user.model';
 import { NODE_ENV } from '../../config';
 import { type ResendOTPInput, type OtpInput } from '../otp/otp.schema';
+import { AppError } from '../../utils';
 
 const accessTokenCookieOptions: CookieOptions = {
   maxAge: 900000, // 15mins
@@ -89,5 +90,49 @@ export class AuthController {
     }
   };
 
-  // public userGoogleAuth = async (req: Request, res: Response, next: NextFunction) => {};
+  public googleSignIn = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const code = req.query.code as string;
+
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { id_token, access_token } = await this.authService.getGoogleOauthTokens(code);
+
+      const googleUser = await this.authService.getGoogleUser(id_token, access_token);
+
+      if (!googleUser.verified_email) {
+        next(new AppError(403, 'Your Google account is not verified'));
+        return;
+      }
+
+      const user = await this.authService.findAndUpdateUser(
+        { email: googleUser.email },
+        {
+          email: googleUser.email,
+          firstName: googleUser.given_name,
+          lastName: googleUser.family_name,
+          isVerified: true
+        },
+        {
+          upsert: true,
+          new: true
+        }
+      );
+
+      if (user !== null) {
+        const { accessToken, refreshToken } = await this.authService.signToken(user);
+
+        res.cookie('accessToken', accessToken, accessTokenCookieOptions);
+        res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
+        res.cookie('loggedIn', true, accessTokenCookieOptions);
+
+        res.redirect(`/welcome?user=${user.firstName}`);
+        return;
+      }
+
+      next(new AppError(404, 'USer not found'));
+      return;
+    } catch (error: any) {
+      next(error);
+    }
+  };
 }

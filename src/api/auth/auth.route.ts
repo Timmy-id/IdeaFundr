@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { type Routes } from '../../common';
 import { Router } from 'express';
+import { type Routes } from '../../common';
 import { AuthController } from './auth.controller';
 import { validateResource } from '../../middlewares';
 import { loginSchema, registerSchema } from './auth.schema';
@@ -28,6 +28,6 @@ export class AuthRoute implements Routes {
       validateResource(resendOTPSchema),
       this.auth.resendOtp
     );
-    // this.router.get(`${this.path}oauth/google`, this.auth.userGoogleAuth);
+    this.router.get(`${this.path}oauth/google`, this.auth.googleSignIn);
   }
 }

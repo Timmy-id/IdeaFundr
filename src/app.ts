@@ -6,9 +6,10 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { type Routes } from './common';
 import { NODE_ENV, PORT, SERVER_URL } from './config';
-import { connectDB, logger, stream } from './utils';
+import { connectDB, getGoogleAuthUri, logger, stream } from './utils';
 import { set } from 'mongoose';
 import { ErrorHandler } from './middlewares';
+import path from 'path';
 
 export class App {
   public app: Application;
@@ -19,6 +20,18 @@ export class App {
     this.app = express();
     this.port = PORT ?? 5000;
     this.env = NODE_ENV ?? 'development';
+
+    this.app.set('views', path.join(__dirname, 'views'));
+    this.app.set('view engine', 'ejs');
+
+    this.app.get('/', (req, res) => {
+      res.render('index', { getGoogleAuthUri });
+    });
+
+    this.app.get('/welcome', (req, res) => {
+      const name = req.query.user;
+      res.render('welcome', { name });
+    });
 
     this.connectToDatabase();
     this.initializeMiddlewares();

@@ -1,5 +1,7 @@
 import { compare } from 'bcryptjs';
-import { Types } from 'mongoose';
+import { type FilterQuery, type QueryOptions, Types, type UpdateQuery } from 'mongoose';
+import axios from 'axios';
+import qs from 'qs';
 import {
   AppError,
   emailVerifiedTemplate,
@@ -11,10 +13,19 @@ import {
 import { type IUser } from '../user/user.interface';
 import { UserModel } from '../user/user.model';
 import { OTPModel } from '../otp/otp.model';
-import { type ILoginData } from './auth.interface';
+import {
+  type IGoogleTokensResult,
+  type ILoginData,
+  type IGoogleUserResult
+} from './auth.interface';
 import {
   ACCESS_TOKEN_EXPIRES_IN,
   ACCESS_TOKEN_PRIVATE_KEY,
+  GOOGLE_AUTH_REDIRECT_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_TOKEN_URL,
+  GOOGLE_USER_URL,
   REFRESH_TOKEN_EXPIRES_IN,
   REFRESH_TOKEN_PRIVATE_KEY
 } from '../../config';
@@ -140,5 +151,47 @@ export class AuthService {
       return;
     }
     throw new AppError(404, 'User not found');
+  }
+
+  public async getGoogleOauthTokens(code: string): Promise<IGoogleTokensResult> {
+    const url = GOOGLE_TOKEN_URL as string;
+
+    const values = {
+      code,
+      client_id: GOOGLE_CLIENT_ID as string,
+      client_secret: GOOGLE_CLIENT_SECRET as string,
+      redirect_uri: GOOGLE_AUTH_REDIRECT_URL as string,
+      grant_type: 'authorization_code'
+    };
+
+    try {
+      const res = await axios.post<IGoogleTokensResult>(url, qs.stringify(values), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      return res.data;
+    } catch (error: any) {
+      throw new AppError(403, error.message);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  public async getGoogleUser(id_token: string, access_token: string): Promise<IGoogleUserResult> {
+    try {
+      const res = await axios.get<IGoogleUserResult>(
+        `${GOOGLE_USER_URL as string}${access_token}`,
+        { headers: { Authorization: `Bearer ${id_token}` } }
+      );
+      return res.data;
+    } catch (error: any) {
+      throw new AppError(400, error.message);
+    }
+  }
+
+  public async findAndUpdateUser(
+    query: FilterQuery<IUser>,
+    update: UpdateQuery<IUser>,
+    options: QueryOptions = {}
+  ) {
+    return await UserModel.findOneAndUpdate(query, update, options);
   }
 }

@@ -5,3 +5,4 @@ export { AppError } from './appError';
 export { otpGenerator, verifyEmailTemplate, emailVerifiedTemplate } from './helpers';
 export { sendMail } from './mailer';
 export { signJwt, verifyJwt } from './jwt';
+export { getGoogleAuthUri } from './getGoogleUri';
