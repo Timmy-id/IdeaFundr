@@ -55,4 +55,16 @@ export class InventionController {
       next(error);
     }
   };
+
+  public getAllInventions = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const inventions = await this.inventionService.AllInventions();
+
+      return res
+        .status(200)
+        .json({ success: true, message: 'Successfully gotten all inventions', data: inventions });
+    } catch (error: any) {
+      next(error);
+    }
+  };
 }

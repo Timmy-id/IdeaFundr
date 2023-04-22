@@ -14,4 +14,8 @@ export class InventionService {
 
     return invention;
   }
+
+  public async AllInventions(): Promise<Invention[]> {
+    return await InventionModel.find({});
+  }
 }

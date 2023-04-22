@@ -29,5 +29,6 @@ export class InventionRoute implements Routes {
       validateResource(createInventionSchema),
       this.invention.newInvention
     );
+    this.router.get(`${this.path}`, this.invention.getAllInventions);
   }
 }

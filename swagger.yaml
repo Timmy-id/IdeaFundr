@@ -96,7 +96,7 @@ paths:
   /inventions:
     post:
       tags:
-       - Invention
+        - Invention
       summary: Upload your invention
       operationId: UploadInvention
       requestBody:
@@ -110,8 +110,25 @@ paths:
           description: Created
         '400':
           description: Bad request
+        '401':
+          description: Unauthorized
         '403':
           description: Forbidden
+        '500':
+          description: Internal server error
+
+    get:
+      tags:
+        - Invention
+      summary: Get all inventions
+      operationId: GetAllInventions
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
         '500':
           description: Internal server error
 
@@ -183,7 +200,9 @@ components:
           example: My Invented cleaner is a tool that helps in cleaning your home.
         keyFeatures:
           type: string
-          example: The most important feature of this product is that it cleans automatically when it spots dirt.
+          example:
+            The most important feature of this product is that it cleans automatically when it spots
+            dirt.
         keyBenefit:
           type: string
           example: It helps reduce stress of cleaning.
