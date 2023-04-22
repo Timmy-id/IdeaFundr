@@ -30,5 +30,6 @@ export class InventionRoute implements Routes {
       this.invention.newInvention
     );
     this.router.get(`${this.path}`, this.invention.getAllInventions);
+    this.router.get(`${this.path}:inventionId`, this.invention.getSingleInvention);
   }
 }

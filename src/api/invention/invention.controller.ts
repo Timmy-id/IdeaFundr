@@ -67,4 +67,17 @@ export class InventionController {
       next(error);
     }
   };
+
+  public getSingleInvention = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { inventionId } = req.params;
+
+      const invention = await this.inventionService.getSingleInvention(inventionId);
+      return res
+        .status(200)
+        .json({ success: true, message: 'Successfully gotten invention', data: invention });
+    } catch (error: any) {
+      next(error);
+    }
+  };
 }

@@ -132,6 +132,31 @@ paths:
         '500':
           description: Internal server error
 
+  /inventions/{inventionId}:
+    parameters:
+      - in: path
+        name: inventionId
+        schema:
+          type: string
+        required: true
+        description: Invention ID
+    get:
+      tags:
+        - Invention
+      summary: Get a single invention
+      operationId: GetSingleInvention
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     RegisterUser:
