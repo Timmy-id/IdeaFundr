@@ -1,4 +1,6 @@
+import fs from 'fs';
 import otp from 'otp-generator';
+import cloudinary from './cloudinary';
 
 interface IOptions {
   digits?: boolean;
@@ -9,6 +11,13 @@ interface IOptions {
 
 export function otpGenerator(length?: number, options?: IOptions) {
   return otp.generate(length, options);
+}
+
+export async function uploadToCloudinary(path: string, folderName: string) {
+  const files = await cloudinary.uploader.upload(path, { folder: folderName });
+  fs.unlinkSync(path);
+
+  return { url: files.secure_url, publicId: files.public_id };
 }
 
 export function verifyEmailTemplate(name: string, otp: string) {
