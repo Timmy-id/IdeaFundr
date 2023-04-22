@@ -24,7 +24,7 @@ export class App {
     this.app.set('views', path.join(__dirname, 'views'));
     this.app.set('view engine', 'ejs');
 
-    this.app.get('/', (req, res) => {
+    this.app.get('/api/v1', (_req, res) => {
       res.render('index', { getGoogleAuthUri });
     });
 
