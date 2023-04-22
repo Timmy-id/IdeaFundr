@@ -1,6 +1,8 @@
 tags:
   - name: Auth
     description: Everything about authentication
+  - name: Invention
+    description: Everything about uploading your inventions
 
 paths:
   /auth/register:
@@ -91,6 +93,28 @@ paths:
         '500':
           description: Internal server error
 
+  /inventions:
+    post:
+      tags:
+       - Invention
+      summary: Upload your invention
+      operationId: UploadInvention
+      requestBody:
+        description: User uploads their inventions
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadInvention'
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+
 components:
   schemas:
     RegisterUser:
@@ -138,3 +162,46 @@ components:
         password:
           type: string
           example: 12345678
+    UploadInvention:
+      required:
+        - productName
+        - productCategory
+        - description
+        - keyFeatures
+        - keyBenefit
+        - productPicture
+      type: object
+      properties:
+        productName:
+          type: string
+          example: My Invented cleaner
+        productCategory:
+          type: string
+          example: Home appliance
+        description:
+          type: string
+          example: My Invented cleaner is a tool that helps in cleaning your home.
+        keyFeatures:
+          type: string
+          example: The most important feature of this product is that it cleans automatically when it spots dirt.
+        keyBenefit:
+          type: string
+          example: It helps reduce stress of cleaning.
+        size:
+          type: string
+          example: 30cm x 30cm
+        weight:
+          type: string
+          example: 3000 grammes
+        materialsUsed:
+          type: string
+          example: The materials used includes plastic, aluminium
+        productPicture:
+          type: string
+          format: binary
+        productVideo:
+          type: string
+          format: binary
+        productDemo:
+          type: string
+          format: binary
