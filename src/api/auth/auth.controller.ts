@@ -1,11 +1,12 @@
 import { type Request, type Response, type NextFunction, type CookieOptions } from 'express';
 import { omit } from 'lodash';
 import { AuthService } from './auth.service';
-import { type LoginInput, type RegisterInput } from './auth.schema';
+import { type RegisterInput } from './auth.schema';
 import { privateFields } from '../user/user.model';
 import { NODE_ENV } from '../../config';
 import { type ResendOTPInput, type OtpInput } from '../otp/otp.schema';
 import { AppError } from '../../utils';
+import { type IUser } from '../user/user.interface';
 
 const accessTokenCookieOptions: CookieOptions = {
   maxAge: 900000, // 15mins
@@ -45,11 +46,7 @@ export class AuthController {
     }
   };
 
-  public loginUser = async (
-    req: Request<{}, {}, LoginInput>,
-    res: Response,
-    next: NextFunction
-  ) => {
+  public loginUser = async (req: Request<{}, {}, IUser>, res: Response, next: NextFunction) => {
     try {
       const userInput = req.body;
       const { accessToken, refreshToken } = await this.authService.login(userInput);
