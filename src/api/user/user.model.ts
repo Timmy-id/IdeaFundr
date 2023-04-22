@@ -1,32 +1,83 @@
-import { model, Schema } from 'mongoose';
+import {
+  modelOptions,
+  prop,
+  Severity,
+  pre,
+  getModelForClass,
+  type DocumentType
+} from '@typegoose/typegoose';
 import bcrypt from 'bcryptjs';
-import { type IUser } from './user.interface';
+import { AppError } from '../../utils';
 
 export const privateFields = ['password', '__v'];
 
-const userSchema: Schema = new Schema(
-  {
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String },
-    isVerified: { type: Boolean, default: false }
-  },
-  { timestamps: true }
-);
-
-userSchema.pre('save', async function (next) {
-  const user = this as IUser;
-  if (!user.isModified('password')) {
-    next();
+@pre<User>('save', async function () {
+  if (!this.isModified('password')) {
     return;
   }
+
   const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(user.password, salt);
+  const hash = await bcrypt.hash(this.password, salt);
 
-  user.password = hash;
+  this.password = hash;
+})
+@modelOptions({
+  schemaOptions: {
+    collection: 'users',
+    timestamps: true
+  },
+  options: {
+    allowMixed: Severity.ALLOW
+  }
+})
+export class User {
+  @prop({ required: true })
+  public firstName: string;
 
-  next();
-});
+  @prop({ required: true })
+  public lastName: string;
 
-export const UserModel = model<IUser>('User', userSchema);
+  @prop({ required: true, unique: true })
+  public email: string;
+
+  @prop()
+  public password: string;
+
+  @prop({ default: false })
+  public isVerified: boolean;
+
+  @prop()
+  public phone?: string;
+
+  @prop()
+  public website?: string;
+
+  @prop()
+  public avatar?: object;
+
+  @prop()
+  public socialMedia?: string[];
+
+  @prop()
+  public languages?: string[];
+
+  @prop()
+  public skills?: string;
+
+  @prop()
+  public education: string[];
+
+  @prop({ default: 'user' })
+  public role: string;
+
+  async validatePassword(this: DocumentType<User>, candidatePassword: string) {
+    try {
+      return await bcrypt.compare(candidatePassword, this.password);
+    } catch (error) {
+      throw new AppError(400, 'Could not validate password');
+    }
+  }
+}
+
+const UserModel = getModelForClass(User);
+export default UserModel;

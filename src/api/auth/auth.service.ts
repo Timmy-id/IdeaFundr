@@ -1,4 +1,4 @@
-import { compare } from 'bcryptjs';
+import { type DocumentType } from '@typegoose/typegoose';
 import { type FilterQuery, type QueryOptions, Types, type UpdateQuery } from 'mongoose';
 import axios from 'axios';
 import qs from 'qs';
@@ -11,13 +11,9 @@ import {
   verifyEmailTemplate
 } from '../../utils';
 import { type IUser } from '../user/user.interface';
-import { UserModel } from '../user/user.model';
-import { OTPModel } from '../otp/otp.model';
-import {
-  type IGoogleTokensResult,
-  type ILoginData,
-  type IGoogleUserResult
-} from './auth.interface';
+import UserModel, { type User } from '../user/user.model';
+import OTPModel from '../otp/otp.model';
+import { type IGoogleTokensResult, type IGoogleUserResult } from './auth.interface';
 import {
   ACCESS_TOKEN_EXPIRES_IN,
   ACCESS_TOKEN_PRIVATE_KEY,
@@ -31,7 +27,7 @@ import {
 } from '../../config';
 
 export class AuthService {
-  public async registerUser(userData: Partial<IUser>): Promise<IUser> {
+  public async registerUser(userData: Partial<User>): Promise<User> {
     const user = await UserModel.findOne({ email: userData.email });
 
     if (user !== null) {
@@ -64,20 +60,20 @@ export class AuthService {
     return newUser;
   }
 
-  public async login(userData: ILoginData) {
+  public async login(userData: IUser) {
     const user = await UserModel.findOne({ email: userData.email });
 
     if (user === null) {
       throw new AppError(400, `Invalid email or password`);
     }
 
-    const isValidPassword = await compare(userData.password, user.password);
+    const isValidPassword = await user.validatePassword(userData.password);
 
     if (!isValidPassword) {
       throw new AppError(400, 'Invalid email or password');
     }
 
-    if (user.isVerified === false) {
+    if (!user.isVerified) {
       throw new AppError(400, 'Please verify your email');
     }
 
@@ -86,7 +82,7 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  public async signToken(user: IUser) {
+  public async signToken(user: DocumentType<User>) {
     const accessToken = signJwt({ _id: user._id }, ACCESS_TOKEN_PRIVATE_KEY as string, {
       expiresIn: ACCESS_TOKEN_EXPIRES_IN
     });
@@ -109,7 +105,7 @@ export class AuthService {
       throw new AppError(400, 'User has been verified or otp has expired');
     }
 
-    const isOtpValid = await compare(otp, otpRecord.code);
+    const isOtpValid = await otpRecord.validateOTP(otp);
 
     if (!isOtpValid) {
       throw new AppError(400, 'Invalid otp');
@@ -131,7 +127,7 @@ export class AuthService {
     }
 
     if (user !== null) {
-      if (user.isVerified === true) {
+      if (user.isVerified) {
         throw new AppError(400, 'User already verified');
       }
 

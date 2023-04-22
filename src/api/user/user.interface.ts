@@ -6,9 +6,4 @@ export interface IUser extends Document {
   lastName: string;
   email: string;
   password: string;
-  passwordConfirm?: string;
-  isVerified?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-  comparePassword?: (candidatePassword: string) => Promise<Boolean>;
 }
