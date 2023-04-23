@@ -9,6 +9,7 @@ export const connectDB = async () => {
     set('strictQuery', false);
     await connect(db);
     logger.info('==== Database Connected ====');
+    logger.info(`============================`);
   } catch (err: any) {
     logger.error(err.message);
   }

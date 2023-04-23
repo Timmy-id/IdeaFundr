@@ -23,7 +23,7 @@ export const deserializeUser = async (req: Request, res: Response, next: NextFun
     );
 
     if (decoded === null) {
-      next(new AppError(401, 'Invalid token'));
+      next(new AppError(401, 'User session expired'));
       return;
     }
 
