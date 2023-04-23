@@ -22,7 +22,7 @@ const payload = {
     materialsUsed: string().optional(),
     productPicture: any().optional(),
     productVideo: any().optional(),
-    productDemo: any().optional()
+    productDemo: string().optional()
   })
 };
 

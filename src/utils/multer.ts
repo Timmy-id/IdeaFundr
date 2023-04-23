@@ -7,7 +7,7 @@ type FileFilterCallback = (error: any | null, file: boolean) => void;
 
 const storage = multer.diskStorage({
   filename: (_req: Request, file: Express.Multer.File, callback: FileNameCallback): void => {
-    callback(null, `${file.fieldname}${Date.now()}`);
+    callback(null, `${file.originalname}`);
   }
 });
 

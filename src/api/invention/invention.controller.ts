@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { type NextFunction, type Request, type Response } from 'express';
 import { InventionService } from './invention.service';
 import { uploadToCloudinary } from '../../utils';
@@ -41,16 +42,29 @@ export class InventionController {
           // @ts-expect-error not really an error
           for (const file of allFiles[key]) {
             const path: string = file.path;
-            const demo = await uploadToCloudinary(path, 'Product-Demo');
-            data.productDemo = demo;
+            data.productDemo = path;
           }
         }
       }
-      const invention = await this.inventionService.createInvention({ ...data, owner: userId });
+      const { site_id } = await this.inventionService.getSiteIdFromSwiftXr(
+        data.productName.replace(/\s/g, '').toLowerCase()
+      );
+
+      const { site_url } = await this.inventionService.getDeployedUrl(
+        site_id,
+        data.productDemo as string
+      );
+
+      const invention = await this.inventionService.createInvention({
+        ...data,
+        owner: userId,
+        siteId: site_id,
+        productDemo: site_url
+      });
 
       return res
         .status(201)
-        .json({ success: true, message: 'Innvention created successfully', data: invention });
+        .json({ success: true, message: 'Invention created successfully', data: invention });
     } catch (error: any) {
       next(error);
     }

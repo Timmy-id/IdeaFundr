@@ -45,7 +45,10 @@ export class Invention {
   public productVideo?: object;
 
   @prop()
-  public productDemo?: object;
+  public productDemo?: string;
+
+  @prop()
+  public siteId?: string;
 }
 
 const InventionModel = getModelForClass(Invention);
