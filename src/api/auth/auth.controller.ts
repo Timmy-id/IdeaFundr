@@ -1,8 +1,6 @@
 import { type Request, type Response, type NextFunction, type CookieOptions } from 'express';
-import { omit } from 'lodash';
 import { AuthService } from './auth.service';
 import { type RegisterInput } from './auth.schema';
-import { privateFields } from '../user/user.model';
 import { NODE_ENV } from '../../config';
 import { type ResendOTPInput, type OtpInput } from '../otp/otp.schema';
 import { AppError } from '../../utils';
@@ -39,7 +37,7 @@ export class AuthController {
       return res.status(201).json({
         success: true,
         message: 'Check your email for verification code',
-        data: omit(newUser.toJSON(), privateFields)
+        data: newUser
       });
     } catch (error: any) {
       next(error);
