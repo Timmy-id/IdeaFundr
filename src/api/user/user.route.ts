@@ -17,5 +17,6 @@ export class UserRoute implements Routes {
     this.router.use(deserializeUser, requireUser);
     this.router.get(`${this.path}me`, this.user.getUserProfile);
     this.router.delete(`${this.path}:userId`, this.user.deleteUser);
+    this.router.get(`${this.path}:userId`, this.user.getUserById);
   }
 }

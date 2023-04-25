@@ -38,4 +38,26 @@ export class UserController {
       next(error);
     }
   };
+
+  public getUserById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params;
+
+      if (!Types.ObjectId.isValid(userId)) {
+        next(new AppError(400, 'Invalid user ID'));
+        return;
+      }
+
+      const user = await this.userService.findUser({ _id: userId });
+
+      if (user === null) {
+        next(new AppError(404, 'User not found'));
+        return;
+      }
+
+      return res.status(200).json({ success: true, data: user });
+    } catch (error: any) {
+      next(error);
+    }
+  };
 }
