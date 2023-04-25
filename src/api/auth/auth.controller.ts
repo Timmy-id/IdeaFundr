@@ -10,7 +10,7 @@ const accessTokenCookieOptions: CookieOptions = {
   maxAge: 900000, // 15mins
   httpOnly: true,
   path: '/',
-  domain: 'ideafundr.onrender.com',
+  domain: 'https://ideafundr.onrender.com',
   sameSite: 'none',
   secure: NODE_ENV === 'production'
 };
