@@ -154,6 +154,10 @@ export class AuthService {
   public async refreshToken(refreshToken: string, userId: string) {
     const decoded = verifyJwt<{ _id: string }>(refreshToken, REFRESH_TOKEN_PUBLIC_KEY as string);
 
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new AppError(400, 'Invalid user ID');
+    }
+
     if (decoded === null) {
       throw new AppError(403, 'Could not refresh access token');
     }

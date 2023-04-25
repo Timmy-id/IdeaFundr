@@ -95,22 +95,6 @@ paths:
         '500':
           description: Internal server error
 
-  /auth/refresh:
-    get:
-      tags:
-        - Auth
-      summary: Refresh user access token
-      operationId: RefreshToken
-      responses:
-        '200':
-          description: Success
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-        '500':
-          description: Internal Server Error
-
   /auth/logout:
     get:
       security:
