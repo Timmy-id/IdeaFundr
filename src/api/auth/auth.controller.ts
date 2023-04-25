@@ -10,6 +10,7 @@ const accessTokenCookieOptions: CookieOptions = {
   maxAge: 900000, // 15mins
   httpOnly: true,
   path: '/',
+  sameSite: 'none',
   secure: NODE_ENV === 'production'
 };
 
@@ -17,6 +18,7 @@ const refreshTokenCookieOptions: CookieOptions = {
   maxAge: 3.154e10, // 1 year
   httpOnly: true,
   path: '/',
+  sameSite: 'none',
   secure: NODE_ENV === 'production'
 };
 
