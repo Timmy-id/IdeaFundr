@@ -158,8 +158,8 @@ export class AuthService {
       throw new AppError(403, 'Could not refresh access token');
     }
 
-    const user = await UserModel.findOne({ _id: JSON.stringify(decoded._id) });
-    console.log(user);
+    const user = await UserModel.findOne({ _id: String(decoded._id) });
+
     if (user === null) {
       throw new AppError(404, 'User does not exist');
     }
