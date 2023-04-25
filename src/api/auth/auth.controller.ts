@@ -22,6 +22,12 @@ const refreshTokenCookieOptions: CookieOptions = {
   secure: NODE_ENV === 'production'
 };
 
+const logout = (res: Response) => {
+  res.cookie('accessToken', '', { maxAge: 1 });
+  res.cookie('refreshToken', '', { maxAge: 1 });
+  res.cookie('loggedIn', '', { maxAge: 1 });
+};
+
 export class AuthController {
   public authService = new AuthService();
 
@@ -141,6 +147,16 @@ export class AuthController {
 
       next(new AppError(404, 'USer not found'));
       return;
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
+  public logoutUser = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      logout(res);
+
+      return res.sendStatus(204);
     } catch (error: any) {
       next(error);
     }

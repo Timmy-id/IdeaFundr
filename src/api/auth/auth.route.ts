@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import { type Routes } from '../../common';
 import { AuthController } from './auth.controller';
-import { validateResource } from '../../middlewares';
+import { deserializeUser, requireUser, validateResource } from '../../middlewares';
 import { loginSchema, registerSchema } from './auth.schema';
 import { resendOTPSchema, verifySchema } from '../otp/otp.schema';
 
@@ -30,5 +30,7 @@ export class AuthRoute implements Routes {
     );
     this.router.get(`${this.path}refresh`, this.auth.refreshAccessTokens);
     this.router.get(`${this.path}oauth/google`, this.auth.googleSignIn);
+    this.router.use(deserializeUser, requireUser);
+    this.router.get(`${this.path}logout`, this.auth.logoutUser);
   }
 }
