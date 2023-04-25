@@ -6,7 +6,7 @@ export const requireUser = (_req: Request, res: Response, next: NextFunction) =>
     const user = res.locals.user;
 
     if (user === null) {
-      next(new AppError(401, 'Invalid token or token expired'));
+      next(new AppError(403, 'Invalid token or token expired'));
       return;
     }
 

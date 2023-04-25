@@ -151,11 +151,15 @@ export class AuthService {
     throw new AppError(404, 'User not found');
   }
 
-  public async refreshToken(refreshToken: string) {
+  public async refreshToken(refreshToken: string, userId: string) {
     const decoded = verifyJwt<{ _id: string }>(refreshToken, REFRESH_TOKEN_PUBLIC_KEY as string);
 
     if (decoded === null) {
       throw new AppError(403, 'Could not refresh access token');
+    }
+
+    if (String(decoded._id) !== userId) {
+      throw new AppError(403, 'You are not allowed to do that');
     }
 
     const user = await UserModel.findOne({ _id: String(decoded._id) });

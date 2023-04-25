@@ -113,6 +113,8 @@ paths:
 
   /auth/logout:
     get:
+      security:
+        - bearerAuth: []
       tags:
         - Auth
       summary: User logs out from the application
@@ -127,6 +129,8 @@ paths:
 
   /inventions:
     post:
+      security:
+        - bearerAuth: []
       tags:
         - Invention
       summary: Upload your invention
@@ -150,6 +154,8 @@ paths:
           description: Internal server error
 
     get:
+      security:
+        - bearerAuth: []
       tags:
         - Invention
       summary: Get all inventions
@@ -173,6 +179,8 @@ paths:
         required: true
         description: Invention ID
     get:
+      security:
+        - bearerAuth: []
       tags:
         - Invention
       summary: Get a single invention
@@ -191,6 +199,8 @@ paths:
 
   /users/me:
     get:
+      security:
+        - bearerAuth: []
       tags:
         - User
       summary: Get logged in user information
@@ -210,6 +220,8 @@ paths:
         required: true
         description: User ID
     delete:
+      security:
+        - bearerAuth: []
       tags:
         - User
       summary: Delete user
@@ -225,6 +237,8 @@ paths:
           description: Internal server error
 
     get:
+      security:
+        - bearerAuth: []
       tags:
         - User
       summary: Get a user by their ID
@@ -240,6 +254,11 @@ paths:
           description: Internal server error
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     RegisterUser:
       type: object

@@ -1,30 +1,9 @@
-import { type Request, type Response, type NextFunction, type CookieOptions } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import { AuthService } from './auth.service';
 import { type RegisterInput } from './auth.schema';
-import { NODE_ENV } from '../../config';
 import { type ResendOTPInput, type OtpInput } from '../otp/otp.schema';
-import { AppError } from '../../utils';
+import { AppError, signJwt } from '../../utils';
 import { type IUser } from '../user/user.interface';
-
-const accessTokenCookieOptions: CookieOptions = {
-  maxAge: 900000, // 15mins
-  httpOnly: true,
-  sameSite: 'none',
-  secure: NODE_ENV === 'production'
-};
-
-const refreshTokenCookieOptions: CookieOptions = {
-  maxAge: 3.154e10, // 1 year
-  httpOnly: true,
-  sameSite: 'none',
-  secure: NODE_ENV === 'production'
-};
-
-const logout = (res: Response) => {
-  res.cookie('accessToken', '', { maxAge: 1 });
-  res.cookie('refreshToken', '', { maxAge: 1 });
-  res.cookie('loggedIn', '', { maxAge: 1 });
-};
 
 export class AuthController {
   public authService = new AuthService();
@@ -53,11 +32,7 @@ export class AuthController {
       const userInput = req.body;
       const { accessToken, refreshToken } = await this.authService.login(userInput);
 
-      res.cookie('accessToken', accessToken, accessTokenCookieOptions);
-      res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
-      res.cookie('loggedIn', true, accessTokenCookieOptions);
-
-      return res.status(200).json({ success: true, data: { accessToken } });
+      return res.status(200).json({ success: true, data: { accessToken, refreshToken } });
     } catch (error: any) {
       next(error);
     }
@@ -91,12 +66,9 @@ export class AuthController {
 
   public refreshAccessTokens = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { refreshToken } = req.cookies;
+      const { refreshToken, userId } = req.body;
 
-      const accessToken = await this.authService.refreshToken(refreshToken);
-
-      res.cookie('accessToken', accessToken, accessTokenCookieOptions);
-      res.cookie('loggedIn', true, accessTokenCookieOptions);
+      const accessToken = await this.authService.refreshToken(refreshToken, userId);
 
       return res.status(200).json({ success: true, data: { accessToken } });
     } catch (error: any) {
@@ -135,12 +107,8 @@ export class AuthController {
       if (user !== null) {
         const { accessToken, refreshToken } = await this.authService.signToken(user);
 
-        res.cookie('accessToken', accessToken, accessTokenCookieOptions);
-        res.cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
-        res.cookie('loggedIn', true, accessTokenCookieOptions);
-
         res.redirect(`/welcome?user=${user.firstName}`);
-        return;
+        return res.status(200).json({ sucess: true, data: { accessToken, refreshToken } });
       }
 
       next(new AppError(404, 'USer not found'));
@@ -152,7 +120,11 @@ export class AuthController {
 
   public logoutUser = async (_req: Request, res: Response, next: NextFunction) => {
     try {
-      logout(res);
+      const user = res.locals.user;
+
+      signJwt({ _id: user._id }, '', {
+        expiresIn: 1
+      });
 
       return res.sendStatus(204);
     } catch (error: any) {
