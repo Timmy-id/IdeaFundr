@@ -9,8 +9,6 @@ import { type IUser } from '../user/user.interface';
 const accessTokenCookieOptions: CookieOptions = {
   maxAge: 900000, // 15mins
   httpOnly: true,
-  path: '/',
-  domain: 'https://ideafundr.onrender.com',
   sameSite: 'none',
   secure: NODE_ENV === 'production'
 };
@@ -18,8 +16,6 @@ const accessTokenCookieOptions: CookieOptions = {
 const refreshTokenCookieOptions: CookieOptions = {
   maxAge: 3.154e10, // 1 year
   httpOnly: true,
-  path: '/',
-  domain: 'https://ideafundr.onrender.com',
   sameSite: 'none',
   secure: NODE_ENV === 'production'
 };
