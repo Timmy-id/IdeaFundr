@@ -4,6 +4,7 @@ import { type RegisterInput } from './auth.schema';
 import { type ResendOTPInput, type OtpInput } from '../otp/otp.schema';
 import { AppError, signJwt } from '../../utils';
 import { type IUser } from '../user/user.interface';
+import { ACCESS_TOKEN_PRIVATE_KEY } from '../../config';
 
 export class AuthController {
   public authService = new AuthService();
@@ -118,13 +119,15 @@ export class AuthController {
     }
   };
 
-  public logoutUser = async (_req: Request, res: Response, next: NextFunction) => {
+  public logoutUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = res.locals.user;
 
-      signJwt({ _id: user._id }, '', {
+      const accessToken = signJwt({ _id: user._id }, ACCESS_TOKEN_PRIVATE_KEY as string, {
         expiresIn: 1
       });
+
+      req.headers.authorization = accessToken;
 
       return res.sendStatus(204);
     } catch (error: any) {

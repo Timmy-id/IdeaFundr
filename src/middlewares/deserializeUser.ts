@@ -17,7 +17,7 @@ export const deserializeUser = async (req: Request, res: Response, next: NextFun
     const decoded = verifyJwt<{ _id: string }>(accessToken, ACCESS_TOKEN_PUBLIC_KEY as string);
 
     if (decoded === null) {
-      next(new AppError(401, 'User session expired'));
+      next(new AppError(401, 'Invalid token'));
       return;
     }
 
