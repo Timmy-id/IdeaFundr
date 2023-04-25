@@ -111,19 +111,19 @@ paths:
         '500':
           description: Internal Server Error
 
-    /auth/logout:
-      get:
-        tags:
-          - Auth
-        summary: User logs out from the application
-        operationId: UserLogout
-        responses:
-          '204':
-            description: Success
-          '403':
-            description: Forbidden
-          '500':
-            description: Internal server error
+  /auth/logout:
+    get:
+      tags:
+        - Auth
+      summary: User logs out from the application
+      operationId: UserLogout
+      responses:
+        '204':
+          description: Success
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
 
   /inventions:
     post:
