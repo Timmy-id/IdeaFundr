@@ -29,5 +29,8 @@ export const {
   SWIFTXR_API_TOKEN,
   CLOUD_NAME,
   API_KEY,
-  API_SECRET
+  API_SECRET,
+  ORIGIN
 } = process.env;
+
+export const CREDENTIALS = process.env.CREDENTIALS === 'true';

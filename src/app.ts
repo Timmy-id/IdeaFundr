@@ -1,11 +1,14 @@
 import express, { type Application } from 'express';
 import http from 'http';
 import morgan from 'morgan';
+import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { type Routes } from './common';
-import { NODE_ENV, PORT, SERVER_URL } from './config';
+import { CREDENTIALS, NODE_ENV, ORIGIN, PORT, SERVER_URL } from './config';
 import { connectDB, getGoogleAuthUri, logger, stream } from './utils';
 import { set } from 'mongoose';
 import { ErrorHandler } from './middlewares';
@@ -64,6 +67,9 @@ export class App {
 
   public initializeMiddlewares() {
     this.app.use(morgan('dev', { stream }));
+    this.app.use(cors({ origin: ORIGIN, credentials: CREDENTIALS }));
+    this.app.use(helmet());
+    this.app.use(compression());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
