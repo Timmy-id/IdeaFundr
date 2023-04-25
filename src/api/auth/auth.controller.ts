@@ -85,6 +85,21 @@ export class AuthController {
     }
   };
 
+  public refreshAccessTokens = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { refreshToken } = req.cookies;
+
+      const accessToken = await this.authService.refreshToken(refreshToken);
+
+      res.cookie('accessToken', accessToken, accessTokenCookieOptions);
+      res.cookie('loggedIn', true, accessTokenCookieOptions);
+
+      return res.status(200).json({ success: true, data: { accessToken } });
+    } catch (error: any) {
+      next(error);
+    }
+  };
+
   public googleSignIn = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const code = req.query.code as string;

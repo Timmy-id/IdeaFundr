@@ -28,6 +28,7 @@ export class AuthRoute implements Routes {
       validateResource(resendOTPSchema),
       this.auth.resendOtp
     );
+    this.router.get(`${this.path}refresh`, this.auth.refreshAccessTokens);
     this.router.get(`${this.path}oauth/google`, this.auth.googleSignIn);
   }
 }

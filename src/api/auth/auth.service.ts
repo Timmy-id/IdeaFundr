@@ -8,7 +8,8 @@ import {
   otpGenerator,
   sendMail,
   signJwt,
-  verifyEmailTemplate
+  verifyEmailTemplate,
+  verifyJwt
 } from '../../utils';
 import { type IUser } from '../user/user.interface';
 import UserModel, { type User } from '../user/user.model';
@@ -23,7 +24,8 @@ import {
   GOOGLE_TOKEN_URL,
   GOOGLE_USER_URL,
   REFRESH_TOKEN_EXPIRES_IN,
-  REFRESH_TOKEN_PRIVATE_KEY
+  REFRESH_TOKEN_PRIVATE_KEY,
+  REFRESH_TOKEN_PUBLIC_KEY
 } from '../../config';
 
 export class AuthService {
@@ -147,6 +149,26 @@ export class AuthService {
       return;
     }
     throw new AppError(404, 'User not found');
+  }
+
+  public async refreshToken(refreshToken: string) {
+    const decoded = verifyJwt<{ _id: string }>(refreshToken, REFRESH_TOKEN_PUBLIC_KEY as string);
+
+    if (decoded === null) {
+      throw new AppError(403, 'Could not refresh access token');
+    }
+
+    const user = await UserModel.findOne({ _id: JSON.stringify(decoded._id) });
+    console.log(user);
+    if (user === null) {
+      throw new AppError(404, 'User does not exist');
+    }
+
+    const accessToken = signJwt({ _id: user._id }, ACCESS_TOKEN_PRIVATE_KEY as string, {
+      expiresIn: ACCESS_TOKEN_EXPIRES_IN
+    });
+
+    return accessToken;
   }
 
   public async getGoogleOauthTokens(code: string): Promise<IGoogleTokensResult> {
