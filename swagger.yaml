@@ -3,6 +3,8 @@ tags:
     description: Everything about authentication
   - name: Invention
     description: Everything about uploading your inventions
+  - name: User
+    description: Everything about the user
 
 paths:
   /auth/register:
@@ -154,6 +156,41 @@ paths:
           description: Unauthorized
         '404':
           description: Not found
+        '500':
+          description: Internal server error
+
+  /users/me:
+    get:
+      tags:
+        - User
+      summary: Get logged in user information
+      operationId: GetUser
+      responses:
+        '200':
+          description: Success
+        '500':
+          description: Internal server error
+
+  /users/{userId}:
+    parameters:
+      - in: path
+        name: userId
+        schema:
+          type: string
+        required: true
+        description: User ID
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      operationId: DeleteUser
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
         '500':
           description: Internal server error
 
